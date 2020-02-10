@@ -1,7 +1,7 @@
-using Main.MedianFilter, Test
+using MedianFilter, Test
 
 function tests()
-    # all results were created using the matlab medfitl1 function
+    # all results were created using the Matlab medfitl1 function
     @testset "General Tests" begin
         @test medfilt1(collect(1:10)) == [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 9.0]
     end
@@ -34,5 +34,5 @@ function tests()
     end
 
 end
-@time medfilt1(collect(1:100000), n = 50000,  padding = "truncate")
+
 tests()

@@ -1,6 +1,6 @@
 # A Julia Implementation of a streaming MedianFilter using Heaps with the same syntax as Matlabs medfilt1
 module MedianFilter
-# Dependancies
+# Dependencies
 using DataStructures
 import Base.isless, Base.isequal
 
@@ -10,7 +10,7 @@ export medfilt1
 """
     medfilt1(x::Array{<:Real}; n::Int = 3, padding::String = "zeropad", dim::Int = -1)
 
-Apply a median filter to a signal vector x, similar to matlabs medfilt1. Using Heap based calculation of the median to increase perdormance for larger windows n.
+Apply a median filter to a signal vector x, similar to Matlabs medfilt1. Using Heap based calculation of the median to increase performance for larger windows n.
 
 # Args:
 
@@ -20,7 +20,7 @@ Apply a median filter to a signal vector x, similar to matlabs medfilt1. Using H
 
 * 'n::Int': Window length. The Median at point i is defined as median(x[i-n+1:i])
 * 'padding::String': Specifies how to deal with Endpoints. The modes 'zeropad' and 'truncate' are available, with the first as default.
-* 'dim::Int': Specifies the dimension to be filtered along. As default the first non singelton dimension is choosen.
+* 'dim::Int': Specifies the dimension to be filtered along. As default the first non singleton dimension is chosen.
 
 
 # Return:
@@ -48,12 +48,12 @@ function medfilt1(x::Array{<:Real}; n::Int = 3, padding::String = "zeropad", dim
     #Check Input
     @assert n > 0 "The window n needs to be greater 0. Is: n = $n"
     @assert padding in ["truncate", "zeropad"] "$padding is not a valid mode for padding. Use 'truncate' or 'zeropad'."
-    @assert maximum(size(x)) > 1 "There is no non singelton dimension in the input."
+    @assert maximum(size(x)) > 1 "There is no non singleton dimension in the input."
     if dim != -1
-        @assert dim > 0 "The dimension needs to be positiv. Is: dim = $dim"
+        @assert dim > 0 "The dimension needs to be positive. Is: dim = $dim"
         @assert length(size(x)) >= dim "The input has only $(length(size(x))) dimensions but dim = $dim."
     else
-        dim = find_first_nonsingelton(x)
+        dim = find_first_nonsingleton(x)
     end
 
     if n == 1
@@ -66,8 +66,8 @@ function medfilt1(x::Array{<:Real}; n::Int = 3, padding::String = "zeropad", dim
 
 end
 
-# Helper function to find the first non singelton dimension
-function find_first_nonsingelton(x)
+# Helper function to find the first non singleton dimension
+function find_first_nonsingleton(x)
     dim = 1
     for i in size(x)
         if i > 1
@@ -87,8 +87,8 @@ function medfilt1_worker_zeropad(x::Vector{<:Real}, n::Int)
     x_pad = zeros(typeof(x[1]), (n -1))
     x_iter = Base.Iterators.Stateful([x_pad; x; x_pad])
 
-    # initilization phase
-    (result, left, right, delete_queue) = initialze_filter(x_iter)
+    # initialization phase
+    (result, left, right, delete_queue) = initialize_filter(x_iter)
     currentMedian = result[2]
     # loop through all elements
     while !isempty(x_iter)
@@ -133,8 +133,8 @@ function medfilt1_worker_truncate(x::Vector{<:Real}, n::Int)
     end
     x_iter = Base.Iterators.Stateful(x)
 
-    # initilization phase
-    (result, left, right, delete_queue) = initialze_filter(x_iter)
+    # initialization phase
+    (result, left, right, delete_queue) = initialize_filter(x_iter)
     currentMedian = result[2]
     # loop through all elements an expand window (n_actual) to desired n
     n_actual = 2
@@ -197,8 +197,8 @@ function correct_heaps_return_median!(left, right)
     return currentMedian
 end
 
-# Helper function that initilizes all data structures and add first 2 elements
-function initialze_filter(x_iter)
+# Helper function that initializes all data structures and add first 2 elements
+function initialize_filter(x_iter)
     # result vector
     result = Vector{Float64}()
     # >= current Median
@@ -208,7 +208,7 @@ function initialze_filter(x_iter)
     # A Queue that saves the Elements in the Heaps and pops the ones to delete next
     delete_queue = Queue{MedianElement}()
 
-    # initilization phase
+    # initialization phase
     # first value
     currentMedian = popfirst!(x_iter)
     push!(result, currentMedian);
